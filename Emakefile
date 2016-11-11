@@ -1,0 +1,1 @@
+{"src/*", [debug_info, warn_missing_spec, {outdir, "ebin"}]}.

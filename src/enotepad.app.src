@@ -1,0 +1,26 @@
+%%%-------------------------------------------------------------------
+%%% @author aaronps
+%%% @copyright (C) 2016, <COMPANY>
+%%% @doc
+%%%
+%%% @end
+%%% Created : 14. Oct 2016 10:52
+%%%-------------------------------------------------------------------
+{application, enotepad, [
+    {description, "ENotepad - Notepad clone using Erlang"},
+    {vsn, "0.9.8"},
+    {registered, []},
+    {applications, [
+        kernel,
+        stdlib,
+%%        sasl,
+        wx
+    ]},
+    {modules, [
+        enotepad, enotepad_app, enotepad_config, enotepad_file, enotepad_font,
+        enotepad_menu, enotepad_print, enotepad_statusbar, enotepad_sup,
+        enotepad_text, enotepad_util, enotepad_wx,
+        wxFindDialogEvent_ex, wxFindReplaceDialog_ex]},
+    {mod, {enotepad_app, []}},
+    {env, []}
+]}.

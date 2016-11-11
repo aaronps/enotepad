@@ -1,0 +1,4 @@
+#!/bin/bash
+
+escript `readlink -en "$0"`.erl $@
+
