@@ -7,7 +7,6 @@
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
         <MainUnitHasTitleStatement Value="False"/>
-        <UseDefaultCompilerOptions Value="True"/>
       </Flags>
       <SessionStorage Value="None"/>
       <MainUnit Value="0"/>
@@ -21,10 +20,8 @@
     </i18n>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
-      <MinorVersionNr Value="9"/>
-      <RevisionNr Value="8"/>
-      <Attributes pvaPrivateBuild="True"/>
-      <StringTable ProductVersion=""/>
+      <MajorVersionNr Value="1"/>
+      <StringTable FileDescription="escript runner" OriginalFilename="escriptrun.exe" ProductName="ENotepad" ProductVersion="1.0.0"/>
     </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>
