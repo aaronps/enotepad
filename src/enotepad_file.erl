@@ -10,6 +10,7 @@
 -author("aaronps").
 
 -include_lib("wx/include/wx.hrl").
+-include_lib("kernel/include/file.hrl").
 
 %% API
 -export([
@@ -99,15 +100,25 @@ save_buffer(TextCtrl, Filename) ->
       when
         TextCtrl :: wxStyledTextCtrl:wxStyledTextCtrl(),
         Filename :: 'undefined' | string().
-
+%% Loads the file into the TextCtrl, but you already knew that, the real reason
+%% for this comment to exists is to record that there is a weird bug on
+%% `wxStyledTextCtrl:loadFile` because on my Linux, when opening a 'directory'
+%% named 'releases' on my mounted vboxsf (rw,nodev,relatime) it doesn't return
+%% any error!!!! If it is other name, there will be an error saying it is a
+%% directory, so we check ourselves.
 load_buffer(TextCtrl, Filename) ->
-    case wxStyledTextCtrl:loadFile(TextCtrl, Filename) of
-        true ->
-            enotepad_util:refresh_scroll_width(TextCtrl),
-            wxStyledTextCtrl:emptyUndoBuffer(TextCtrl),
-            ok;
+    case file:read_file_info(Filename) of
+        {error, _}                          -> error;
+        {ok, #file_info{type = directory}}  -> error;
+        _ ->
+            case wxStyledTextCtrl:loadFile(TextCtrl, Filename) of
+                true ->
+                    enotepad_util:refresh_scroll_width(TextCtrl),
+                    wxStyledTextCtrl:emptyUndoBuffer(TextCtrl),
+                    ok;
 
-        false -> error % couldn't load, do nothing
+                false -> error % couldn't load, do nothing
+            end
     end.
 
 -spec show_open_dialog(Parent, TextCtrl)
@@ -138,9 +149,13 @@ show_open_dialog(Parent, TextCtrl) ->
 -spec ensure_file(string()) -> {'yes', string()} | 'no' | 'cancel'.
 ensure_file(FileName) ->
     case {filelib:is_file(FileName), filename:extension(FileName)} of
-        {true, _}   -> {yes, FileName};
         {false, ""} -> ensure_file(FileName ++ ".txt");
-        {false, _}  -> ask_create_file(FileName)
+        {false, _}  -> ask_create_file(FileName);
+        {true, _}   ->
+            case filelib:is_dir(FileName) of
+                true  -> no;
+                false -> {yes, FileName}
+            end
     end.
 
 -spec ask_create_file(string()) -> {'yes', string()} | 'no' | 'cancel'.
@@ -150,14 +165,14 @@ ask_create_file(FileName) ->
            ++ "Do you want to create a new file?",
     Style = ?wxYES_NO bor ?wxCANCEL bor ?wxCENTRE bor ?wxICON_EXCLAMATION,
 
-
     case enotepad_util:simple_dialog(Message, Style) of
         ?wxID_YES    -> create_empty_or_no(FileName);
         ?wxID_NO     -> no;
         ?wxID_CANCEL -> cancel
     end.
 
--spec create_empty_or_no(string()) -> {'ok', string()} | 'no'.
+-spec create_empty_or_no(string()) -> {'yes', string()} | 'no'.
+%% Will create and empty file with the provided name.
 create_empty_or_no(FileName) ->
     case file:write_file(FileName, <<>>) of
         ok -> {yes, FileName};

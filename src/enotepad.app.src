@@ -8,7 +8,7 @@
 %%%-------------------------------------------------------------------
 {application, enotepad, [
     {description, "ENotepad - Notepad clone using Erlang"},
-    {vsn, "0.9.8"},
+    {vsn, "1.0.0"},
     {registered, []},
     {applications, [
         kernel,

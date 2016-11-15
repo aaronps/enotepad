@@ -13,6 +13,7 @@
 -define(APPNAME, enotepad).
 
 -include_lib("wx/include/wx.hrl").
+-include_lib("kernel/include/file.hrl").
 
 %% Entry used to generate the zip file for the 'escript' generation.
 -type file_entry() :: {Name :: string(), Data :: binary()}.
@@ -23,9 +24,6 @@
 
 main([]) ->
     main(["all"]);
-
-main(["test"]) ->
-    io:format("Result = ~p~n", [code:get_object_code(emaker)]);
 
 main(["clean"]) ->
     clean();
@@ -248,7 +246,11 @@ clean() ->
     delete_file("ebin").
 
 make() ->
+    % note: ensure_dir ensures that all parent directories for the specified
+    % file or directory exist, trying to create them if necessary,
+    % hence -> /something
     filelib:ensure_dir("ebin/something"),
+
     AppNameStr = atom_to_list(?APPNAME),
     case file:consult("src/" ++ AppNameStr ++ ".app.src") of
         {ok, [{application, ?APPNAME, AppProp} = AppDesc]} ->
@@ -354,7 +356,7 @@ prepare_release_dir(Dir) ->
                 [Dir, Reason]);
 
         _ ->
-            filelib:ensure_dir(filename:join(Dir, "d"))
+            filelib:ensure_dir(filename:join(Dir, "something"))
     end.
 
 release_reltool() ->
@@ -381,10 +383,27 @@ release_reltool() ->
                 ]},
                 {boot_rel, AppNameStr}
             ]}}], ReleaseDir),
-            file:copy(filename:join("erlrun", "erlrun.exe"),
-                      filename:join(ReleaseDir, "enotepad.exe")),
+
+            case os:type() of
+                { win32, _} -> file:copy(filename:join("launcher", "erlrun.exe"),
+                                         filename:join(ReleaseDir, "enotepad.exe"));
+
+                { unix, _} ->  file:copy(filename:join("launcher", "erlrun.sh"),
+                                         filename:join(ReleaseDir, "enotepad")),
+                    % althrough the filename:join is the same, keep it like
+                    % this for reading purpose.
+                    set_executable_bit(filename:join(ReleaseDir, "enotepad"))
+            end,
+
             io:format("reltool result: ~p~n", [R]);
 
         {ok, _} -> die("*** ERROR *** App file incorrect~n");
         _       -> die("*** ERROR *** cannot load app file~n")
+    end.
+
+set_executable_bit(Filename) ->
+    {ok, #file_info{mode = OldMode}} = file:read_file_info(Filename),
+    case OldMode bor 8#111 of
+        OldMode -> ok; % no change, do nothing
+        NewMode -> file:change_mode(Filename, NewMode)
     end.

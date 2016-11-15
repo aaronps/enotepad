@@ -567,7 +567,7 @@ stop_me(S) ->
 %% Decides how shall stop the thing:
 %%   normal -> we are not an application, just stop how you normally would.
 %%   init   -> we are a "permanent" application, maybe from a release, init:stop
-%%   {application, _} -> we are an application, but can use application:stop().
+%%   {application, _} -> we are an application and can use application:stop().
 how_to_stop() ->
     case application:get_application() of
         undefined -> normal;
@@ -715,4 +715,4 @@ check_has_selection(#state{is_selecting = WasSelecting} = S) ->
 
 -spec open_help() -> boolean().
 open_help() ->
-    wx_misc:launchDefaultBrowser("http://aaronps.com").
+    wx_misc:launchDefaultBrowser("https://github.com/aaronps/enotepad").
