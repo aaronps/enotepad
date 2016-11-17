@@ -130,13 +130,16 @@ main(A) ->
     halt(1).
 
 help() ->
-    io:format("availble targets:
+    io:format("available targets:
     all             - (default) runs make:all
+    clean           - removes ebin
+    rebuild         - cleans and build
     escript         - builds escript file for this system
     escript all     - builds escript file for all systems (not rebar style)
     escript windows - builds escript file for windows
     escript unix    - builds escript file for unix-like systems
     escript rebar   - builds escript file rebar style (windows file is small)
+    escript exe     - same as 'escript rebar' but using .exe instead of .cmd
     dialyzer Type   - runs dializer, Type might be ebin(default) or src
     release systools- makes a release using systools
     release reltool - makes a release using reltool
@@ -390,8 +393,8 @@ release_reltool() ->
 
                 { unix, _} ->  file:copy(filename:join("launcher", "erlrun.sh"),
                                          filename:join(ReleaseDir, "enotepad")),
-                    % althrough the filename:join is the same, keep it like
-                    % this for reading purpose.
+                    % althrough the filename:join is the same in this two line,
+                    % keep it like this for reading purpose.
                     set_executable_bit(filename:join(ReleaseDir, "enotepad"))
             end,
 

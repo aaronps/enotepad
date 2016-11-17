@@ -20,11 +20,12 @@
     ensure_file/1
 ]).
 
--spec simple_name('undefined' | string()) -> string().
+-spec simple_name(FileName :: 'undefined' | string()) -> string().
+%% The idea is to return a name that will be used for the title bar.
 simple_name(undefined) -> "Untitled";
-simple_name(Name) -> filename:basename(Name).
+simple_name(FileName) -> filename:basename(FileName).
 
--spec save_buffer(TextCtrl, FileName, boolean())
+-spec save_buffer(TextCtrl, FileName, AskName :: boolean())
         -> {'ok', string()} | {'error', string()}
       when
         TextCtrl :: wxStyledTextCtrl:wxStyledTextCtrl(),
