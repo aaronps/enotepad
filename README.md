@@ -1,6 +1,8 @@
 # enotepad
 Clone of MS Notepad using Erlang (wxWidgets)
 
+![Enotepad screenshot](screenshot.png)
+
 ## Motivation
 
 In the process of learning Erlang, I wanted to make some GUI application, so I
