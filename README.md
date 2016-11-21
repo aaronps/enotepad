@@ -21,6 +21,10 @@ Things learned:
 * dialyzer and types
 * how to make releases with systools and with reltool
 
+## Requirement
+
+- Erlang 19.1
+
 ## Installation
 
 This program is not inteded to be installed, its a learning tool.
