@@ -156,7 +156,7 @@ script_name(windows) -> script_name(unix) ++ ".cmd".
 
 shebang(unix) -> "#!/usr/bin/env escript\n";
 shebang(windows) -> "@escript %~f0 %* & exit /b\r\n";
-shebang(windows_mini) -> "@escript %~d0%~p0%~n0 %*\r\n".
+shebang(windows_mini) -> "@escript %~dpn0 %*\r\n".
 
 make_script() ->
     wx:new(),
