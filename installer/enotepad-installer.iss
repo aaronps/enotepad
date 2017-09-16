@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Enotepad"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.0.1"
 #define MyAppPublisher "aaronps"
 #define MyAppURL "https://github.com/aaronps/enotepad"
 #define MyAppExeName "enotepad.exe"
