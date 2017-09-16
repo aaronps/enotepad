@@ -177,8 +177,16 @@ make_script() ->
     case escript:create(binary, [
         %% this won't work for a windows cmd:
         %% {shebang, "@echo off & escript %~f0 %* & exit /b"},
-        comment,
-        {emu_args, "-smp"},
+        %% because using "shebang" will always prepend "#"
+
+        %% 2017-09-16: remove the coment too because it will make the escript
+        %% unrunnable :(
+        %% comment,
+
+        %% 2017-09-16: on erlang 20 it is always SMP
+        %% but most important: adding emu_args will make the escript un-runnable
+        %% until some bugs are fixed, remove the args and it should run.
+        %% {emu_args, "-smp"},
         {archive, [IconFile, AppFile | Beams], []}
     ]) of
         {ok, Binary} -> Binary;

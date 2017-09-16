@@ -634,8 +634,8 @@ set_icon_from_script(Frame, Name) ->
     ScriptFile = filename:dirname(code:which(?MODULE)),
 %%    io:format("Loading icon from script: ~p~n", [ScriptFile]),
     case escript:extract(ScriptFile, []) of
-        {ok, [_,_,_,{archive,Archive}]} ->
-            case zip:unzip(Archive, [memory, {file_list,[Name]}]) of
+        {ok, [_,_,_,{archive,Escript}]} ->
+            case zip:unzip(zip_part(Escript), [memory, {file_list,[Name]}]) of
                 {ok, [{_, RawData}]} ->
                     Image = image_from_raw_data(RawData),
                     Bitmap = wxBitmap:new(Image),
@@ -654,6 +654,12 @@ set_icon_from_script(Frame, Name) ->
         _ ->
             io:format("Cannot load icon, maybe is not running as script")
     end.
+
+zip_header() -> <<"PK",3,4>>.
+
+zip_part(Escript) -> 
+    { Start, _ } = binary:match(Escript,zip_header(),[]),
+    binary:part(Escript, Start, byte_size(Escript) - Start).
 
 image_from_raw_data(RawData) ->
     <<ImageWidth:32, ImageHeight:32,
