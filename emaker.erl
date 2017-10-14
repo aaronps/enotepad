@@ -37,24 +37,31 @@ main(["all"]) ->
     io:format("~p~n", [R]);
 
 main(["escript" | Type]) ->
-    make(),
-    Scr = make_script(),
     Dir = filename:join("releases", "escript"),
     prepare_release_dir(Dir),
+
+    clean(),
+    make(),
+
+    Scr = make_script(),
 
     R = case Type of
         [] ->
             case os:type() of
-                { win32, _} -> write_file(Dir,
+                { win32, _} -> notity_erlang20_windows_escript(),
+                                write_file(Dir,
                                           script_name(windows),
-                                          [shebang(windows), Scr]);
+%%                                          [shebang(windows), Scr]);
+                                          [Scr]);
 
                 { unix, _} ->  write_file(Dir,
                                           script_name(unix),
+%%                                          [shebang(unix)   , Scr])
                                           [shebang(unix)   , Scr])
             end;
 
         ["all"] ->
+            notity_erlang20_windows_escript(),
             R1 = write_file(Dir, script_name(windows), [shebang(windows), Scr]),
             R2 = write_file(Dir, script_name(unix),    [shebang(unix)   , Scr]),
             case R1 of
@@ -66,7 +73,8 @@ main(["escript" | Type]) ->
             write_file(Dir, script_name(unix), [shebang(unix), Scr]);
 
         ["windows"] ->
-            write_file(Dir, script_name(windows), [shebang(windows), Scr]);
+            notity_erlang20_windows_escript(),
+            write_file(Dir, script_name(windows), [Scr]);
 
         ["rebar"] ->
             R1 = write_file(Dir, script_name(unix), [shebang(unix), Scr]),
@@ -145,6 +153,12 @@ help() ->
     release reltool - makes a release using reltool
 ").
 
+notity_erlang20_windows_escript() ->
+    io:format("WARNING WARNING WARNING:
+    Single file windows escript stopped working after Erlang 20 (rebar and exe style works ok)
+    Anyway I'll generate the file just in case it works again
+END OF WARNING~n").
+
 die(Message) -> io:format(Message), halt(1).
 die(Message, Params) -> io:format(Message, Params), halt(1).
 
@@ -168,8 +182,9 @@ make_script() ->
     % so, load all files as binaries.
 
     Beams = load_modules(Modules),
-    IconFile = load_icon("icon/icon32.png"),
-    AppFile = {"enotepad.app", load_file("ebin/enotepad.app")},
+    IconFile = load_icon(filename:join("icon","icon32.png")),
+    AppFile = { filename:join(["enotepad","ebin","enotepad.app"]),
+                load_file(filename:join("ebin","enotepad.app")) },
 
     % 'shebang' always prepends "#!", so to create the ".cmd" we have to
     % do it ourselves
@@ -179,9 +194,11 @@ make_script() ->
         %% {shebang, "@echo off & escript %~f0 %* & exit /b"},
         %% because using "shebang" will always prepend "#"
 
+
         %% 2017-09-16: remove the coment too because it will make the escript
         %% unrunnable :(
-        %% comment,
+        comment,
+        {emu_args, "-escript main enotepad"},
 
         %% 2017-09-16: on erlang 20 it is always SMP
         %% but most important: adding emu_args will make the escript un-runnable
@@ -209,7 +226,9 @@ load_modules(Modules) ->
         Filename :: string().
 %% handles result of code:get_object_code/1, will return a file entry or die
 %% trying.
-module_to_file_entry(_, {_, Binary, File}) -> {filename:basename(File), Binary};
+module_to_file_entry(_, {_, Binary, File}) ->
+    { filename:join(["enotepad","ebin",filename:basename(File)]), Binary};
+
 module_to_file_entry(Module, error) ->
     io:format("Error: cannot load module: ~p~n", [Module]),
     halt(1).
@@ -232,9 +251,10 @@ load_icon(Filename) ->
             RGBLen = byte_size(RGBData),
             AlphaData = wxImage:getAlpha(Image),
             AlphaLen = byte_size(AlphaData),
-            {"icon32.raw", <<ImageWidth:32, ImageHeight:32,
-                             RGBLen:32,   RGBData/binary,
-                             AlphaLen:32, AlphaData/binary>>};
+            { filename:join(["enotepad","ebin","icon32.raw"]),
+              <<ImageWidth:32, ImageHeight:32,
+                RGBLen:32,     RGBData/binary,
+                AlphaLen:32,   AlphaData/binary>> };
 
         false ->
             io:format("Error: icon ~p load error~n", [Filename]),

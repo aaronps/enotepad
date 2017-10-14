@@ -1,0 +1,15 @@
+{application, enotepad_build_plugin,
+ [{description, "Special build functions for enotepad using rebar3"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {maintainers, []},
+  {licenses, ["BSD-2-Clause"]},
+  {links, []}
+ ]}.

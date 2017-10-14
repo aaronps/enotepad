@@ -618,7 +618,7 @@ set_icon(Frame) ->
     case filelib:is_dir(PrivDir) of
 %%        true -> set_icon_from_file(Frame, PrivDir, "enotepad-icon32d.png");
         true -> set_icon_from_file(Frame, PrivDir, "icon.ico");
-        false-> set_icon_from_script(Frame, "icon32.raw")
+        false-> set_icon_from_script(Frame, filename:join(["enotepad", "ebin", "icon32.raw"]))
     end.
 
 -spec set_icon_from_file(wxFrame:wxFrame(), string(), string()) -> 'ok'.
@@ -631,8 +631,8 @@ set_icon_from_file(Frame, Dir, Name) ->
 
 -spec set_icon_from_script(wxFrame:wxFrame(), string()) -> 'ok'.
 set_icon_from_script(Frame, Name) ->
-    ScriptFile = filename:dirname(code:which(?MODULE)),
-%%    io:format("Loading icon from script: ~p~n", [ScriptFile]),
+    ScriptFile = escript:script_name(),
+%%    io:format("Loading icon ~p from script file: ~p~n", [Name, ScriptFile]),
     case escript:extract(ScriptFile, []) of
         {ok, [_,_,_,{archive,Escript}]} ->
             case zip:unzip(zip_part(Escript), [memory, {file_list,[Name]}]) of
