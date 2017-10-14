@@ -41,6 +41,14 @@ do(State) ->
             rebar_file_utils:rm_rf("ebin");
 
         AppInfo when element(2,AppInfo) =:= <<"enotepad">> ->
+            EscriptPath = enotepad_build_plugin:escript_path(State),
+            CmdPath = <<EscriptPath/binary,".cmd">>,
+            ExePath = <<EscriptPath/binary,".exe">>,
+
+            file:delete(EscriptPath),
+            file:delete(CmdPath),
+            file:delete(ExePath),
+
             rebar_file_utils:rm_rf(rebar_app_info:out_dir(AppInfo));
 
         _ -> % ignore other apps

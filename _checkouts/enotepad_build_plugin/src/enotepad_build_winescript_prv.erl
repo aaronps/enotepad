@@ -40,7 +40,7 @@ format_error(Reason) ->
     io_lib:format("~p", [Reason]).
 
 do_target("shortcmd", State) ->
-    EscriptPath = rebar_state:escript_path(State),
+    EscriptPath = enotepad_build_plugin:escript_path(State),
     CmdPath = <<EscriptPath/binary,".cmd">>,
     rebar_api:info("Replacing ~p with sorter version~n", [CmdPath]),
     file:write_file(CmdPath, shebang(windows_mini)),
@@ -48,7 +48,7 @@ do_target("shortcmd", State) ->
 
 do_target("single", State) ->
     rebar_api:warn("*** WARNING *** Windows `shebang` for escript stopped working on Erlang 20", []),
-    EscriptPath = rebar_state:escript_path(State),
+    EscriptPath = enotepad_build_plugin:escript_path(State),
 
     {ok, [_Shebang, Comment, EmuArgs, Body]} = escript:extract(binary_to_list(EscriptPath), []),
     {ok, NewEscriptBin} = escript:create(binary, [Comment, EmuArgs, Body]),
@@ -59,7 +59,7 @@ do_target("single", State) ->
     {ok, State};
 
 do_target("exe", State) ->
-    EscriptPath = rebar_state:escript_path(State),
+    EscriptPath = enotepad_build_plugin:escript_path(State),
     CmdPath = <<EscriptPath/binary,".cmd">>,
     ExePath = <<EscriptPath/binary,".exe">>,
     rebar_api:info("Replacing ~p with .exe version~n", [CmdPath]),
@@ -72,3 +72,4 @@ do_target(Target, _State) ->
 
 shebang(windows) -> <<"@escript %~f0 %* & exit /b\r\n">>;
 shebang(windows_mini) -> <<"@escript %~dpn0 %*\r\n">>.
+
