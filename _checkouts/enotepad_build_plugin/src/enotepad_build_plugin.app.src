@@ -1,6 +1,6 @@
 {application, enotepad_build_plugin,
  [{description, "Special build functions for enotepad using rebar3"},
-  {vsn, "0.1.0"},
+  {vsn, "0.2.0"},
   {registered, []},
   {applications,
    [kernel,

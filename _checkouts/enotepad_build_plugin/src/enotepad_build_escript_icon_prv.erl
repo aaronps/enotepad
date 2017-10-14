@@ -31,7 +31,6 @@ init(State) ->
         {opts, []},
         {short_desc, "Generates the raw icon which is loaded by enotepad escript version"},
         {desc, "Generates the raw icon which is loaded by enotepad escript version"}
-        %% ,{hooks, {escriptize}}
     ]),
     {ok, rebar_state:add_provider(State, Provider)}.
 
