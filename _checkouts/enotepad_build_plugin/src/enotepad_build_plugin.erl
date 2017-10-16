@@ -10,7 +10,8 @@ init_providers(State) ->
     lists:foldl(fun init_provider/2, State, [
         enotepad_build_winescript_prv,
         enotepad_build_escript_icon_prv,
-        enotepad_build_clean_prv
+        enotepad_build_clean_prv,
+        enotepad_build_reltool_prv
     ]).
 
 init_provider(Module, State) ->
