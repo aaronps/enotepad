@@ -23,49 +23,30 @@ Things learned:
 
 ## Requirement
 
-- Erlang 19.1
+- Erlang >= 19.1
 
 ## Installation
 
-This program is not inteded to be installed, its a learning tool.
+This program is not intended to be installed, its a learning tool.
 
 Anyway, on Windows there is an installer, but for other systems you must build
 from source.
 
 ## Building
 
-This project uses an Emakefile and a custom `escript` to build, the idea behind
-it is to understand how things are build in Erlang. The command used is `emaker`
-and you can find it on the project root folder.
+This project has been converted to use rebar3 to compile and build the releases.
 
-On windows run `emaker help`, on others `./emaker help`.
+Extra `rebar3` commands and their effects:
 
-    available targets:
-        all             - (default) runs make:all
-        clean           - removes ebin
-        rebuild         - cleans and build
-        escript         - builds escript file for this system
-        escript all     - builds escript file for all systems (not rebar style)
-        escript windows - builds escript file for windows
-        escript unix    - builds escript file for unix-like systems
-        escript rebar   - builds escript file rebar style (windows file is small)
-        escript exe     - same as 'escript rebar' but using .exe instead of .cmd
-        dialyzer Type   - runs dializer, Type might be ebin(default) or src
-        release systools- makes a release using systools
-        release reltool - makes a release using reltool
+    reltool    - makes a release using reltool
+    systools   - makes a release using systools
+    release    - do not use, this is the default of rebar3 and uses relx which is not supported
+    clean      - extended clean which deletes more files.
+    escriptize - This is the default rebar3 escriptize but embeds the app icon within the escript.
+    winescript - This extedns escriptize to generate special versions for windows
 
-For example `emaker escript` will build an _escript_ version of enotepad,
-`emaker release reltool` will make a full release using reltool.
-
-The output of `emaker` will be:
-* ./ebin for normal build
-* ./releases/escript for any of `escript X`
-* ./releases/systool for `release systools`
-* ./releases/reltool for `release reltool`
-
-You could, if you so wish you can also run `erl -make` and will get the results
-on ebin.
-
+Get more details for `winescript` using `rebar3 help winescript`.
+    
 ## Running
 
 You can run enotepad in multiple ways: using Erlang shell, using the built
@@ -73,8 +54,11 @@ _escript_ and using a generated release.
 
 ### Using Erlang shell
 
-Within a project folder run `erl -pa ebin` then in the Erlang shell you have
-multiple options too, using main like the _escript_:
+Using `rebar3 shell` will start a shell with the required libraries on path, you have
+multiple options to run it:
+ 
+Using main like the _escript_:
+
 ```
 Eshell V8.1  (abort with ^G)
 1> enotepad:main().
@@ -85,6 +69,7 @@ ok
 
 Using `start_link` which is used when running under supervisor, but you can use
 too:
+
 ```
 Eshell V8.1  (abort with ^G)
 1> enotepad:start_link().
@@ -94,6 +79,7 @@ ok
 ```
 
 Starting like an application:
+
 ```
 Eshell V8.1  (abort with ^G)
 1> application:start(wx), application:start(enotepad).
@@ -104,7 +90,7 @@ ok
 ok
 ```
 
-When running like an application, you can stop also with
+When running like an application, you can stop with
 `application:stop(enotepad)` but this is not needed if you just close the
 window.
 
@@ -121,7 +107,3 @@ just run it by name with optional parameter:
 
 This doesn't require Erlang as it already includes it, just run it by name like
 the _escript_, the actual file you run is a facade to hide the erl parameters.
-
-## @todo
-
-Need to write a description of the knowledge acquired.

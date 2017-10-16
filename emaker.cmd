@@ -1,1 +1,0 @@
-@escript %~dpn0.erl %*
