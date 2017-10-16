@@ -4,17 +4,15 @@
 %%% @doc
 %%%
 %%% @end
-%%% Created : 15. Oct 2017 14:32
+%%% Created : 16. Oct 2017 22:49
 %%%-------------------------------------------------------------------
--module(enotepad_build_reltool_prv).
+-module(enotepad_build_systools_prv).
 -author("aaronps").
 
 %% API
 -export([init/1, do/1, format_error/1]).
 
--include_lib("kernel/include/file.hrl").
-
--define(PROVIDER, reltool).
+-define(PROVIDER, systools).
 -define(DEPS, [app_discovery, compile]).
 
 %% ===================================================================
@@ -29,8 +27,8 @@ init(State) ->
         {deps, ?DEPS},                % The list of dependencies
         {example, "rebar3 " ++ atom_to_list(?PROVIDER)},  % How to use the plugin
         {opts, []},
-        {short_desc, "Creates a release of enotepad using reltool"},
-        {desc, "Creates a release of enotepad using reltool"}
+        {short_desc, "Creates a release of enotepad using systools"},
+        {desc, "Creates a release of enotepad using systools"}
     ]),
     {ok, rebar_state:add_provider(State, Provider)}.
 
@@ -54,47 +52,52 @@ do_release(State, App) ->
     ReleaseDir = release_dest_path(State),
     prepare_release_dir(ReleaseDir),
 
-    AppVersion = rebar_app_info:original_vsn(App),
-    rebar_api:info("Mmaking release ~p~n", [AppVersion]),
+    Rel = generate_systools_rel(App),
+    ReleaseVersion = rebar_app_info:original_vsn(App),
+    ReleaseId = "enotepad-" ++ ReleaseVersion,
+    ReleaseBase = filename:join(ReleaseDir, ReleaseId),
 
-    R = reltool:create_target([{config, {sys,[
-        {relocatable, true},
-        {profile, standalone},
-        {rel, "enotepad", AppVersion,
-            rebar_app_info:applications(App) ++ [enotepad]
-        },
-        {app, enotepad, [
-            {lib_dir, rebar_app_info:out_dir(App) }
-        ]},
-        {boot_rel, "enotepad"}
-    ]}}], ReleaseDir),
 
-    case os:type() of
-        { win32, _} -> file:copy(filename:join("launcher", "erlrun.exe"),
-                                 filename:join(ReleaseDir, "enotepad.exe"));
+    file:write_file(ReleaseBase ++ ".rel", io_lib:format("~p.", [Rel])),
 
-        { unix, _} ->  file:copy(filename:join("launcher", "erlrun.sh"),
-                                 filename:join(ReleaseDir, "enotepad")),
+    rebar_api:info("Making release ~s", [ReleaseId]),
 
-            % althrough the filename:join is the same in this two line,
-            % keep it like this for reading purpose.
-            set_executable_bit(filename:join(ReleaseDir, "enotepad"))
-    end,
+    OutEbin = filename:join(rebar_app_info:out_dir(App), "ebin"),
 
-    rebar_api:info("Reltool result: ~p~n", [R]),
+    systools:make_script(ReleaseBase, [
+        local,
+        {path, [OutEbin]}
+    ]),
+
+    systools:make_tar(ReleaseBase, [
+        {erts, code:root_dir()},
+        {path, [OutEbin]}
+    ]),
+    io:format("Release ok in '~s'~n", [ReleaseBase ++ ".tar.gz"]),
 
     {ok, State}.
 
 release_dest_path(State) ->
-    filename:join([rebar_dir:base_dir(State), "reltool"]).
+    filename:join([rebar_dir:base_dir(State), "systools"]).
 
 prepare_release_dir(Dir) ->
     rebar_file_utils:rm_rf(Dir),
     filelib:ensure_dir(filename:join(Dir, "dummy")).
 
-set_executable_bit(Filename) ->
-    {ok, #file_info{mode = OldMode}} = file:read_file_info(Filename),
-    case OldMode bor 8#111 of
-        OldMode -> ok; % no change, do nothing
-        NewMode -> file:change_mode(Filename, NewMode)
+generate_systools_rel(App) ->
+    Applications = rebar_app_info:applications(App),
+    ReleaseVersion = rebar_app_info:original_vsn(App),
+    [ application:load(X) || X <- Applications],
+    { release,
+        {"enotepad", ReleaseVersion},
+        {erts, erlang:system_info(version) },
+            [
+                { X, get_app_version(X)} || X <- Applications
+            ] ++ [{ enotepad, ReleaseVersion}]
+    }.
+
+get_app_version(App) ->
+    case application:get_key(App, vsn) of
+        {ok, Version} -> Version;
+        _ -> rebar_api:abort("Cannot get version for application ~p~n", [App])
     end.

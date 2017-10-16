@@ -11,7 +11,8 @@ init_providers(State) ->
         enotepad_build_winescript_prv,
         enotepad_build_escript_icon_prv,
         enotepad_build_clean_prv,
-        enotepad_build_reltool_prv
+        enotepad_build_reltool_prv,
+        enotepad_build_systools_prv
     ]).
 
 init_provider(Module, State) ->
