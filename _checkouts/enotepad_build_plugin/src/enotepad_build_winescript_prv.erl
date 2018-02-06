@@ -21,7 +21,7 @@ init(State) ->
             {opts, [
                 {target, undefined, undefined, {string, "shortcmd"}, "Feature to apply"}
             ]},
-            {short_desc, "escriptize with extra features for windows"},
+            {short_desc, "(enotepad) escriptize with extra features for windows"},
             {desc, "escriptize with extra features for windows, targets are:
 
     shortcmd - (default) replaces the rebar generated .cmd with a shorter one.

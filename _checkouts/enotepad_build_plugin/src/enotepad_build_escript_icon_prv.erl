@@ -29,7 +29,7 @@ init(State) ->
         {deps, ?DEPS},                % The list of dependencies
         {example, "rebar3 " ++ atom_to_list(?PROVIDER)}, % How to use the plugin
         {opts, []},
-        {short_desc, "Generates the raw icon which is loaded by enotepad escript version"},
+        {short_desc, "(enotepad) Generates the raw icon which is loaded by enotepad escript version"},
         {desc, "Generates the raw icon which is loaded by enotepad escript version"}
     ]),
     {ok, rebar_state:add_provider(State, Provider)}.

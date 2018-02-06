@@ -29,7 +29,7 @@ init(State) ->
         {deps, ?DEPS},                % The list of dependencies
         {example, "rebar3 clean"},    % How to use the plugin
         {opts, []},
-        {short_desc, "Removes extra files which `rebar3 clean -a` doesn't"},
+        {short_desc, "(enotepad) Removes extra files which `rebar3 clean -a` doesn't"},
         {desc, "Removes extra files which `rebar3 clean -a` doesn't"}
     ]),
     {ok, rebar_state:add_provider(State, Provider)}.

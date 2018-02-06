@@ -27,7 +27,7 @@ init(State) ->
         {deps, ?DEPS},                % The list of dependencies
         {example, "rebar3 " ++ atom_to_list(?PROVIDER)},  % How to use the plugin
         {opts, []},
-        {short_desc, "Creates a release of enotepad using systools"},
+        {short_desc, "(enotepad) Creates a release of enotepad using systools"},
         {desc, "Creates a release of enotepad using systools"}
     ]),
     {ok, rebar_state:add_provider(State, Provider)}.

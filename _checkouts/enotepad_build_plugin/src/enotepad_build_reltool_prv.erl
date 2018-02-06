@@ -29,7 +29,7 @@ init(State) ->
         {deps, ?DEPS},                % The list of dependencies
         {example, "rebar3 " ++ atom_to_list(?PROVIDER)},  % How to use the plugin
         {opts, []},
-        {short_desc, "Creates a release of enotepad using reltool"},
+        {short_desc, "(enotepad) Creates a release of enotepad using reltool"},
         {desc, "Creates a release of enotepad using reltool"}
     ]),
     {ok, rebar_state:add_provider(State, Provider)}.
@@ -55,7 +55,7 @@ do_release(State, App) ->
     prepare_release_dir(ReleaseDir),
 
     AppVersion = rebar_app_info:original_vsn(App),
-    rebar_api:info("Mmaking release ~p~n", [AppVersion]),
+    rebar_api:info("Making release ~p~n", [AppVersion]),
 
     R = reltool:create_target([{config, {sys,[
         {relocatable, true},
