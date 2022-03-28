@@ -192,10 +192,10 @@ undoall_hack(TextCtrl) ->
     wxStyledTextCtrl:clearAll(TextCtrl),
     wxStyledTextCtrl:appendText(TextCtrl, T).
 
--define(none,       ?wxSTC_SCMOD_NORM).
--define(shift,      ?wxSTC_SCMOD_SHIFT).
--define(ctrl,       ?wxSTC_SCMOD_CTRL).
--define(ctrlshift,  ?wxSTC_SCMOD_CTRL bor ?wxSTC_SCMOD_SHIFT).
+-define(none,       ?wxSTC_KEYMOD_NORM).
+-define(shift,      ?wxSTC_KEYMOD_SHIFT).
+-define(ctrl,       ?wxSTC_KEYMOD_CTRL).
+-define(ctrlshift,  ?wxSTC_KEYMOD_CTRL bor ?wxSTC_KEYMOD_SHIFT).
 %% intellij-erlang doesn't like ?M, but the compilers doesn't complain.
 -define(assign(K,M,Cmd), wxStyledTextCtrl:cmdKeyAssign(TextCtrl, K, ?M, Cmd)).
 
