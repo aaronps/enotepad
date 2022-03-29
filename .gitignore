@@ -1,3 +1,6 @@
 rebar.lock
 .idea
 *.iml
+/_build/
+/.idea/
+/installer/Output/

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Enotepad"
-#define MyAppVersion "1.0.1"
+#define MyAppVersion "1.0.2"
 #define MyAppPublisher "aaronps"
 #define MyAppURL "https://github.com/aaronps/enotepad"
 #define MyAppExeName "enotepad.exe"
@@ -19,10 +19,10 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName={commonpf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-OutputBaseFilename=enotepad-setup
-Compression=lzma
+OutputBaseFilename=enotepad-{#MyAppVersion}-setup
+Compression=lzma2/max
 SolidCompression=yes
 ArchitecturesInstallIn64BitMode=x64
 
@@ -33,8 +33,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\releases\reltool\enotepad.exe"; DestDir: "{app}"; Flags: ignoreversion 64bit
-Source: "..\releases\reltool\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs 64bit
+Source: "..\_build\default\reltool\enotepad.exe"; DestDir: "{app}"; Flags: ignoreversion 64bit
+Source: "..\_build\default\reltool\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs 64bit
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
